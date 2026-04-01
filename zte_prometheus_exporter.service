@@ -1,0 +1,26 @@
+[Unit]
+Description=ZTE modem Prometheus exporter
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=zte-exporter
+Group=zte-exporter
+WorkingDirectory=/opt/zte-prometheus-exporter
+ExecStart=/opt/zte-prometheus-exporter/venv/bin/python /opt/zte-prometheus-exporter/zte_prometheus_exporter.py
+Restart=always
+RestartSec=5
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/zte-prometheus-exporter
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+[Install]
+WantedBy=multi-user.target

@@ -11,7 +11,7 @@ from prometheus_client import CollectorRegistry, Gauge, Info, make_wsgi_app
 ROUTER_BASE_URL = "http://192.168.0.1"
 LISTEN_ADDRESS = "0.0.0.0"
 LISTEN_PORT = 9105
-POLL_INTERVAL_SECONDS = 300  # 5 minutes is fine for a yearly data plan counter
+POLL_INTERVAL_SECONDS = 60  # 5 minutes is fine for a yearly data plan counter
 REQUEST_TIMEOUT_SECONDS = 10
 
 CMD_FIELDS = [
@@ -77,12 +77,6 @@ metric_monthly_rx_bytes = Gauge(
 metric_monthly_tx_bytes = Gauge(
     "zte_modem_monthly_tx_bytes",
     "Monthly transmitted bytes reported by the modem",
-    registry=registry,
-)
-
-metric_monthly_total_bytes = Gauge(
-    "zte_modem_monthly_total_bytes",
-    "Monthly total bytes reported by the modem",
     registry=registry,
 )
 
@@ -155,9 +149,6 @@ def scrape_modem() -> None:
             metric_monthly_rx_bytes, data.get("monthly_rx_bytes"))
         monthly_tx = set_gauge_if_present(
             metric_monthly_tx_bytes, data.get("monthly_tx_bytes"))
-
-        if monthly_rx is not None and monthly_tx is not None:
-            metric_monthly_total_bytes.set(monthly_rx + monthly_tx)
 
         metric_up.set(1)
         metric_scrape_timestamp.set_to_current_time()
